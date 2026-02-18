@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Status
 
-Phases 1-4 complete (Auth, Lists CRUD, Todos + Fuzzy Search, Sharing + Realtime). **Phase 5 (Mobile polish + PWA) is next**: AlphabetScroller, PWA manifest/service worker, mobile responsive sidebar, empty states, loading skeletons, toasts, offline banner, then deploy to Vercel.
+All 5 phases complete. Deployed to Vercel at `better-todo-seven.vercel.app`. Supabase project ID: `ggounpxclsivvkjstcyf`.
 
 ## Commands
 
