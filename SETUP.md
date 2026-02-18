@@ -109,10 +109,28 @@ Before clicking Deploy, expand **Environment Variables** and add:
 3. Add this URL to Supabase redirect URLs (section 1, "Configure Redirect URLs")
 
 ### Custom Domain (Optional)
+
+#### Vercel Side
 1. In Vercel: **Project Settings → Domains**
-2. Add your domain
-3. Vercel shows DNS instructions — add the A/CNAME record at your domain registrar
-4. Add the custom domain to Supabase redirect URLs too
+2. Add your root domain (e.g., `teenietodo.com`)
+3. Add `www.teenietodo.com` and choose **redirect www → root**
+4. Vercel will show the required DNS records
+
+#### DNS at DreamHost (or other registrar)
+1. Log into [panel.dreamhost.com](https://panel.dreamhost.com)
+2. Go to **Manage Domains** → find your domain → **DNS** / **Edit DNS**
+3. Delete any existing A records for the root domain
+4. Add these records:
+   - **A record**: Host = `@` (or blank), Value = `76.76.21.21`
+   - **CNAME record**: Host = `www`, Value = `cname.vercel-dns.com`
+5. DNS propagation takes 10-30 minutes (up to 48 hours)
+
+#### Update Supabase
+1. Go to **Authentication → URL Configuration**
+2. Change **Site URL** to `https://yourdomain.com`
+3. Under **Redirect URLs**, add:
+   - `https://yourdomain.com`
+   - `https://www.yourdomain.com`
 
 ### Auto-Deploy
 Every push to `main` on GitHub automatically triggers a new deployment on Vercel. No manual steps needed.
