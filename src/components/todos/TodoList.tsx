@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import confetti from 'canvas-confetti'
+import { toast } from 'sonner'
 import { MoreHorizontal, Share2, Pencil, Trash2 } from 'lucide-react'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { fetchTodos, addTodo, toggleTodo, deleteTodo, optimisticToggle, clearTodos } from '@/store/slices/todosSlice'
@@ -13,6 +14,7 @@ import { ShareListDialog } from '@/components/lists/ShareListDialog'
 import { SearchBar } from './SearchBar'
 import { TodoItem } from './TodoItem'
 import { AddTodoInput } from './AddTodoInput'
+import { AlphabetScroller } from './AlphabetScroller'
 
 export function TodoList() {
   const { listId } = useParams<{ listId: string }>()
@@ -29,6 +31,7 @@ export function TodoList() {
   const [isRenaming, setIsRenaming] = useState(false)
   const [renameName, setRenameName] = useState('')
   const [showShare, setShowShare] = useState(false)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   useRealtimeSubscription(listId)
 
@@ -58,6 +61,23 @@ export function TodoList() {
     }
   }, [results])
 
+  // Available letters for alphabet scroller
+  const availableLetters = useMemo(() => {
+    const letters = new Set<string>()
+    active.forEach((t) => {
+      const first = t.text.charAt(0).toUpperCase()
+      if (/[A-Z]/.test(first)) letters.add(first)
+    })
+    return letters
+  }, [active])
+
+  const handleLetterTap = useCallback((letter: string) => {
+    const el = document.getElementById(`letter-${letter}`)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [])
+
   // Celebrate when all items are completed
   useEffect(() => {
     if (prevActiveCount.current !== null && prevActiveCount.current > 0 && active.length === 0 && completed.length > 0) {
@@ -86,7 +106,9 @@ export function TodoList() {
   }, [active.length, completed.length])
 
   const handleAdd = (text: string) => {
-    if (listId) dispatch(addTodo({ listId, text }))
+    if (listId) {
+      dispatch(addTodo({ listId, text }))
+    }
   }
 
   const handleToggle = (id: string, isCompleted: boolean) => {
@@ -96,6 +118,7 @@ export function TodoList() {
 
   const handleDelete = (id: string) => {
     dispatch(deleteTodo(id))
+    toast('Item deleted')
   }
 
   const handleRename = async () => {
@@ -103,32 +126,43 @@ export function TodoList() {
     if (!trimmed || !listId) return
     await dispatch(renameList({ id: listId, name: trimmed }))
     setIsRenaming(false)
+    toast('List renamed')
   }
 
   const handleDeleteList = async () => {
     if (!listId || !confirm('Delete this list and all its items?')) return
     await dispatch(deleteList(listId))
+    toast('List deleted')
     navigate('/')
   }
 
   if (!listId) {
     return (
-      <div className="flex h-full items-center justify-center text-muted-foreground">
-        Select a list to get started
+      <div className="flex h-full items-center justify-center p-4 text-center text-muted-foreground">
+        Select a list or create a new one
       </div>
     )
   }
 
   if (loading) {
     return (
-      <div className="flex h-full items-center justify-center text-muted-foreground">
-        Loading...
+      <div className="mx-auto max-w-2xl p-4">
+        <div className="mb-4 h-8 w-48 animate-pulse rounded bg-muted" />
+        <div className="mb-4 h-9 animate-pulse rounded-md bg-muted" />
+        <div className="space-y-2">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="h-10 animate-pulse rounded-md bg-muted" />
+          ))}
+        </div>
       </div>
     )
   }
 
+  // Group active items by first letter for alphabet scroller targets
+  let currentLetter = ''
+
   return (
-    <div className="mx-auto flex h-full max-w-2xl flex-col p-4">
+    <div className="relative mx-auto flex h-full max-w-2xl flex-col p-4">
       <div className="mb-4 flex items-center gap-2">
         {isRenaming ? (
           <form onSubmit={(e) => { e.preventDefault(); handleRename() }} className="flex flex-1 gap-2">
@@ -151,19 +185,19 @@ export function TodoList() {
               {showMenu && (
                 <div className="absolute right-0 z-10 mt-1 w-48 rounded-md border bg-popover py-1 shadow-md">
                   <button
-                    className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-accent"
+                    className="flex w-full items-center gap-2 px-3 py-2.5 text-sm hover:bg-accent min-h-[44px]"
                     onClick={() => { setShowShare(true); setShowMenu(false) }}
                   >
                     <Share2 className="h-4 w-4" /> Share
                   </button>
                   <button
-                    className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-accent"
+                    className="flex w-full items-center gap-2 px-3 py-2.5 text-sm hover:bg-accent min-h-[44px]"
                     onClick={() => { setRenameName(currentList?.name ?? ''); setIsRenaming(true); setShowMenu(false) }}
                   >
                     <Pencil className="h-4 w-4" /> Rename
                   </button>
                   <button
-                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-destructive hover:bg-accent"
+                    className="flex w-full items-center gap-2 px-3 py-2.5 text-sm text-destructive hover:bg-accent min-h-[44px]"
                     onClick={() => { handleDeleteList(); setShowMenu(false) }}
                   >
                     <Trash2 className="h-4 w-4" /> Delete List
@@ -179,17 +213,25 @@ export function TodoList() {
 
       <SearchBar value={query} onChange={setQuery} />
 
-      <div className="mt-4 flex-1 overflow-auto">
+      <div className="mt-4 flex-1 overflow-auto pr-6" ref={scrollContainerRef}>
         {active.length > 0 && (
           <div className="mb-4">
-            {active.map((todo) => (
-              <TodoItem
-                key={todo.id}
-                todo={todo}
-                onToggle={handleToggle}
-                onDelete={handleDelete}
-              />
-            ))}
+            {active.map((todo) => {
+              const firstChar = todo.text.charAt(0).toUpperCase()
+              const showAnchor = /[A-Z]/.test(firstChar) && firstChar !== currentLetter
+              if (showAnchor) currentLetter = firstChar
+
+              return (
+                <div key={todo.id}>
+                  {showAnchor && <div id={`letter-${firstChar}`} className="scroll-mt-2" />}
+                  <TodoItem
+                    todo={todo}
+                    onToggle={handleToggle}
+                    onDelete={handleDelete}
+                  />
+                </div>
+              )
+            })}
           </div>
         )}
 
@@ -230,6 +272,8 @@ export function TodoList() {
           <AddTodoInput onAdd={handleAdd} />
         </div>
       )}
+
+      {!query && <AlphabetScroller availableLetters={availableLetters} onLetterTap={handleLetterTap} />}
     </div>
   )
 }

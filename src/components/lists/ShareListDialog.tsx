@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { toast } from 'sonner'
 import { UserPlus, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
@@ -71,11 +72,13 @@ export function ShareListDialog({ listId, isOpen, onClose }: ShareListDialogProp
     }
 
     setEmail('')
+    toast('List shared successfully')
     loadShares()
   }
 
   const handleRemove = async (shareId: string) => {
     await supabase.from('list_shares').delete().eq('id', shareId)
+    toast('User removed from list')
     loadShares()
   }
 

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
+import { Toaster } from 'sonner'
 import { store } from '@/store/store'
 import { useAppSelector } from '@/store/hooks'
 import { AuthGuard } from '@/components/auth/AuthGuard'
@@ -42,6 +43,7 @@ function App() {
           </Routes>
         </AuthGuard>
       </BrowserRouter>
+      <Toaster position="bottom-center" />
     </Provider>
   )
 }

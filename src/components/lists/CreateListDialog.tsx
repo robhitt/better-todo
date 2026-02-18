@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 import { useAppDispatch } from '@/store/hooks'
 import { createList } from '@/store/slices/listsSlice'
 import { Input } from '@/components/ui/input'
@@ -16,6 +17,7 @@ export function CreateListPage() {
     if (!trimmed) return
     const result = await dispatch(createList(trimmed))
     if (createList.fulfilled.match(result)) {
+      toast('List created')
       navigate(`/list/${result.payload.id}`)
     }
   }

@@ -7,9 +7,14 @@ import { fetchLists } from '@/store/slices/listsSlice'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
-export function Sidebar() {
+interface SidebarProps {
+  onNavigate: () => void
+}
+
+export function Sidebar({ onNavigate }: SidebarProps) {
   const dispatch = useAppDispatch()
   const lists = useAppSelector((state) => state.lists.items)
+  const listsLoading = useAppSelector((state) => state.lists.loading)
   const user = useAppSelector((state) => state.auth.user)
 
   useEffect(() => {
@@ -22,7 +27,7 @@ export function Sidebar() {
 
   return (
     <div className="flex h-full w-64 flex-col border-r bg-sidebar">
-      <div className="flex items-center justify-between border-b px-4 py-3">
+      <div className="hidden md:flex items-center justify-between border-b px-4 py-3">
         <h2 className="text-lg font-semibold">Better ToDo</h2>
         <Button variant="ghost" size="icon" onClick={handleSignOut} title="Sign out">
           <LogOut className="h-4 w-4" />
@@ -30,35 +35,61 @@ export function Sidebar() {
       </div>
 
       <nav className="flex-1 overflow-auto p-2">
-        {lists.map((list) => (
-          <NavLink
-            key={list.id}
-            to={`/list/${list.id}`}
-            className={({ isActive }) =>
-              cn(
-                'block rounded-md px-3 py-2 text-sm transition-colors hover:bg-accent',
-                isActive && 'bg-accent font-medium'
-              )
-            }
-          >
-            {list.name}
-          </NavLink>
-        ))}
+        {listsLoading ? (
+          <div className="space-y-2 p-2">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-9 animate-pulse rounded-md bg-muted" />
+            ))}
+          </div>
+        ) : lists.length === 0 ? (
+          <div className="px-3 py-8 text-center text-sm text-muted-foreground">
+            No lists yet. Create one below!
+          </div>
+        ) : (
+          lists.map((list) => (
+            <NavLink
+              key={list.id}
+              to={`/list/${list.id}`}
+              onClick={onNavigate}
+              className={({ isActive }) =>
+                cn(
+                  'block rounded-md px-3 py-2.5 text-sm transition-colors hover:bg-accent min-h-[44px] flex items-center',
+                  isActive && 'bg-accent font-medium'
+                )
+              }
+            >
+              {list.name}
+            </NavLink>
+          ))
+        )}
       </nav>
 
       <div className="border-t p-2">
         <NavLink
           to="/new-list"
-          className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          onClick={onNavigate}
+          className="flex items-center gap-2 rounded-md px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground min-h-[44px]"
         >
           <Plus className="h-4 w-4" />
           New List
         </NavLink>
-        {user && (
-          <div className="mt-2 truncate px-3 py-1 text-xs text-muted-foreground">
-            {user.email}
-          </div>
-        )}
+
+        <div className="mt-2 flex items-center justify-between px-3 py-1">
+          {user && (
+            <span className="truncate text-xs text-muted-foreground">
+              {user.email}
+            </span>
+          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="ml-2 h-8 w-8 shrink-0 md:hidden"
+            onClick={handleSignOut}
+            title="Sign out"
+          >
+            <LogOut className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </div>
   )
