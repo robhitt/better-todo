@@ -12,8 +12,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['vite.svg'],
       manifest: {
-        name: 'Better ToDo',
-        short_name: 'Better ToDo',
+        name: 'Teenie ToDo',
+        short_name: 'Teenie ToDo',
         description: 'A simple, shared todo list with search',
         theme_color: '#ffffff',
         background_color: '#ffffff',

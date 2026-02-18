@@ -34,7 +34,7 @@ export function AppLayout() {
           <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)}>
             <Menu className="h-5 w-5" />
           </Button>
-          <span className="ml-2 text-lg font-semibold">Better ToDo</span>
+          <span className="ml-2 text-lg font-semibold">Teenie ToDo</span>
         </div>
 
         <OfflineBanner />

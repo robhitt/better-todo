@@ -16,7 +16,7 @@ export function LoginPage() {
     <div className="flex min-h-screen items-center justify-center">
       <div className="mx-auto flex w-full max-w-sm flex-col items-center gap-6 px-4">
         <div className="text-center">
-          <h1 className="text-3xl font-bold">Better ToDo</h1>
+          <h1 className="text-3xl font-bold">Teenie ToDo</h1>
           <p className="mt-2 text-muted-foreground">
             A simple, shared todo list with search
           </p>
