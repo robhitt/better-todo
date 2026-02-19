@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
-import { LogIn, Users, Search, Share2 } from 'lucide-react'
+import { LogIn } from 'lucide-react'
 
 interface LoginPageProps {
   redirectTo?: string
@@ -33,7 +33,7 @@ export function LoginPage({ redirectTo }: LoginPageProps) {
               Teenie ToDo
             </h1>
             <p className="mt-4 text-lg text-muted-foreground sm:text-xl">
-              The tiny todo app that keeps your team in sync.
+              The tiny todo app that keeps everyone in sync.
               <br className="hidden sm:block" />
               Real-time, searchable, and effortlessly shared.
             </p>
@@ -49,24 +49,6 @@ export function LoginPage({ redirectTo }: LoginPageProps) {
           </Button>
         </div>
 
-        {/* Feature cards */}
-        <div className="mx-auto mt-20 grid w-full max-w-3xl gap-6 px-4 sm:grid-cols-3">
-          <FeatureCard
-            icon={<Users className="h-6 w-6 text-purple-500" />}
-            title="Real-time collaboration"
-            description="Changes sync instantly across all devices. See updates from your team as they happen."
-          />
-          <FeatureCard
-            icon={<Search className="h-6 w-6 text-pink-500" />}
-            title="Fuzzy search"
-            description="Find any todo in milliseconds with forgiving, typo-tolerant search."
-          />
-          <FeatureCard
-            icon={<Share2 className="h-6 w-6 text-sky-500" />}
-            title="Simple sharing"
-            description="Share lists with anyone via email. No sign-up codes or complicated permissions."
-          />
-        </div>
       </main>
 
       {/* Footer */}
@@ -77,20 +59,3 @@ export function LoginPage({ redirectTo }: LoginPageProps) {
   )
 }
 
-function FeatureCard({
-  icon,
-  title,
-  description,
-}: {
-  icon: React.ReactNode
-  title: string
-  description: string
-}) {
-  return (
-    <div className="rounded-xl border bg-white/60 p-6 shadow-sm backdrop-blur-sm">
-      <div className="mb-3">{icon}</div>
-      <h3 className="font-semibold">{title}</h3>
-      <p className="mt-1 text-sm text-muted-foreground">{description}</p>
-    </div>
-  )
-}
