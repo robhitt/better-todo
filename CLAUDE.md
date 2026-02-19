@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Better ToDo** — a collaborative todo list app with real-time sync, fuzzy search, and list sharing. Built on React + TypeScript, Vite, Redux Toolkit, Supabase, and Tailwind CSS v4.
+**Teenie ToDo** — a collaborative todo list app with real-time sync, fuzzy search, and list sharing. Built on React + TypeScript, Vite, Redux Toolkit, Supabase, and Tailwind CSS v4.
 
 ## Current Status
 
-All 5 phases complete. Deployed to Vercel at `better-todo-seven.vercel.app`. Supabase project ID: `ggounpxclsivvkjstcyf`.
+All 5 phases complete. Deployed to Vercel at `teenietodo.com` (`better-todo-seven.vercel.app`). Supabase project ID: `ggounpxclsivvkjstcyf`.
 
 ## Commands
 
