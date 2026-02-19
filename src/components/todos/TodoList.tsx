@@ -198,6 +198,15 @@ export function TodoList() {
   const handleToggle = (id: string, isCompleted: boolean) => {
     dispatch(optimisticToggle(id))
     dispatch(toggleTodo({ id, isCompleted }))
+    toast(isCompleted ? 'Item completed' : 'Item uncompleted', {
+      action: {
+        label: 'Undo',
+        onClick: () => {
+          dispatch(optimisticToggle(id))
+          dispatch(toggleTodo({ id, isCompleted: !isCompleted }))
+        },
+      },
+    })
   }
 
   const handleDelete = (id: string) => {

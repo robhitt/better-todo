@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Trash2 } from 'lucide-react'
+import { Trash2, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { Todo } from '@/types/database'
@@ -54,19 +54,23 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }: TodoItemProps) {
   return (
     <div
       className={cn(
-        'group flex items-center gap-3 rounded-md px-3 py-2 transition-colors duration-150 hover:bg-accent',
+        'group flex items-center gap-3 rounded-md px-3 py-2 transition-colors duration-150 hover:bg-accent active:bg-accent/80',
       )}
       onClick={handleToggle}
       role="button"
     >
-      <input
-        type="checkbox"
-        checked={todo.is_completed}
-        readOnly
-        className="h-5 w-5 shrink-0 rounded border-input accent-primary transition-all duration-150"
-        onClick={(e) => e.stopPropagation()}
-        onChange={handleToggle}
-      />
+      <div
+        className={cn(
+          'flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-all duration-150',
+          'active:scale-90',
+          todo.is_completed
+            ? 'border-primary bg-primary'
+            : 'border-muted-foreground/40 bg-transparent'
+        )}
+        onClick={(e) => { e.stopPropagation(); handleToggle() }}
+      >
+        {todo.is_completed && <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />}
+      </div>
       {isEditing ? (
         <input
           ref={inputRef}
